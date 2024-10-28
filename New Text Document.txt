@@ -1,0 +1,168 @@
+using System;
+using System.Drawing; // Add this namespace for Image
+using System.Windows.Forms;
+
+namespace TicTacToeI
+{
+    public partial class Form1 : Form
+    {
+        private char currentPlayer;
+        private char[,] board;
+        private Button[,] buttons;
+
+        // Game results
+        private int playerXWins = 0;
+        private int playerOWins = 0;
+        private int draws = 0;
+
+        public Form1()
+        {
+            InitializeComponent();
+            currentPlayer = 'X';
+            board = new char[3, 3];
+            buttons = new Button[3, 3]
+            {
+                { button1, button2, button3 },
+                { button4, button5, button6 },
+                { button7, button8, button9 }
+            };
+            InitializeBoard();
+        }
+
+        private void InitializeBoard()
+        {
+            for (int i = 0; i < 3; i++)
+                for (int j = 0; j < 3; j++)
+                    board[i, j] = ' ';
+        }
+
+        private void Button_Click(object sender, EventArgs e)
+        {
+            Button clickedButton = (Button)sender;
+            int row = -1, col = -1;
+
+            // Find button in buttons array
+            for (int i = 0; i < 3; i++)
+            {
+                for (int j = 0; j < 3; j++)
+                {
+                    if (buttons[i, j] == clickedButton)
+                    {
+                        row = i;
+                        col = j;
+                        break;
+                    }
+                }
+            }
+
+            if (board[row, col] == ' ')
+            {
+                board[row, col] = currentPlayer;
+
+                // Load images
+                if (currentPlayer == 'X')
+                {
+                    clickedButton.BackgroundImage = Image.FromFile(@"C:\Users\Student\Pictures\BKP\x.png");
+                }
+                else
+                {
+                    clickedButton.BackgroundImage = Image.FromFile(@"C:\Users\Student\Pictures\BKP\o.png");
+                }
+
+                clickedButton.BackgroundImageLayout = ImageLayout.Stretch; // Optional for scaling
+
+                if (CheckWinner())
+                {
+                    MessageBox.Show("Player " + currentPlayer + " wins!");
+                    UpdateGameResults(currentPlayer);
+                    InitializeBoard();
+                    ResetButtons();
+                }
+                else if (CheckDraw())
+                {
+                    MessageBox.Show("It's a draw!");
+                    UpdateGameResults('D');
+                    InitializeBoard();
+                    ResetButtons();
+                }
+
+                currentPlayer = (currentPlayer == 'X') ? 'O' : 'X';
+            }
+        }
+
+        private bool CheckWinner()
+        {
+            for (int i = 0; i < 3; i++)
+            {
+                if ((board[i, 0] == currentPlayer && board[i, 1] == currentPlayer && board[i, 2] == currentPlayer) ||
+                    (board[0, i] == currentPlayer && board[1, i] == currentPlayer && board[2, i] == currentPlayer))
+                    return true;
+            }
+            if ((board[0, 0] == currentPlayer && board[1, 1] == currentPlayer && board[2, 2] == currentPlayer) ||
+                (board[0, 2] == currentPlayer && board[1, 1] == currentPlayer && board[2, 0] == currentPlayer))
+                return true;
+
+            return false;
+        }
+
+        private bool CheckDraw()
+        {
+            for (int i = 0; i < 3; i++)
+            {
+                for (int j = 0; j < 3; j++)
+                {
+                    if (board[i, j] == ' ')
+                        return false; // There are empty cells
+                }
+            }
+            return true; // No empty cells, it's a draw
+        }
+
+        private void ResetButtons()
+        {
+            foreach (Control control in this.Controls)
+            {
+                if (control is Button)
+                {
+                    control.BackgroundImage = null; // Clear the background image
+                    control.Text = ""; // Clear any text, if necessary
+                }
+            }
+        }
+
+        private void UpdateGameResults(char winner)
+        {
+            if (winner == 'X')
+            {
+                playerXWins++;
+            }
+            else if (winner == 'O')
+            {
+                playerOWins++;
+            }
+            else // Draw
+            {
+                draws++;
+            }
+
+            // Display results
+            MessageBox.Show($"Current Results:\nX Wins: {playerXWins}\nO Wins: {playerOWins}\nDraws: {draws}");
+        }
+
+        // Event handlers for buttons
+        private void button1_Click(object sender, EventArgs e) { Button_Click(sender, e); }
+        private void button2_Click(object sender, EventArgs e) { Button_Click(sender, e); }
+        private void button3_Click(object sender, EventArgs e) { Button_Click(sender, e); }
+        private void button4_Click(object sender, EventArgs e) { Button_Click(sender, e); }
+        private void button5_Click(object sender, EventArgs e) { Button_Click(sender, e); }
+        private void button6_Click(object sender, EventArgs e) { Button_Click(sender, e); }
+        private void button7_Click(object sender, EventArgs e) { Button_Click(sender, e); }
+        private void button8_Click(object sender, EventArgs e) { Button_Click(sender, e); }
+        private void button9_Click(object sender, EventArgs e) { Button_Click(sender, e); }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            // Additional initialization if needed
+        }
+    }
+}
